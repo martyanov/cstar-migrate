@@ -601,7 +601,7 @@ class Migrator(object):
                     date,
                     checksum))
             print(tabulate.tabulate(data, headers=['#', 'Name', 'State',
-                                          'Date applied', 'Checksum']))
+                                                   'Date applied', 'Checksum']))
 
         if pending_migrations:
             print('\n## Pending migrations\n')
