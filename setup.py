@@ -15,6 +15,7 @@ setuptools.setup(
     author='Andrey Martyanov',
     author_email='andrey@martyanov.com',
     license='MIT',
+    python_requires='>=3.7, <4',
     install_requires=[
         'arrow',
         'cassandra-driver',
