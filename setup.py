@@ -19,7 +19,6 @@ setuptools.setup(
     install_requires=[
         'arrow',
         'cassandra-driver',
-        'future',
         'pyyaml<5.0',
         'tabulate',
     ],

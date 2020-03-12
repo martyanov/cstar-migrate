@@ -12,7 +12,7 @@ import sys
 import os
 import importlib
 from functools import wraps
-from future.moves.itertools import zip_longest
+from itertools import zip_longest
 
 import arrow
 from tabulate import tabulate
