@@ -1,27 +1,27 @@
-# encoding: utf-8
-
-from __future__ import (absolute_import, division,
-                        print_function, unicode_literals)
-from builtins import input, str
-
-import re
-import logging
-import uuid
 import codecs
-import sys
-import os
+import functools
 import importlib
-from functools import wraps
-from itertools import zip_longest
+import itertools
+import logging
+import os
+import re
+import sys
+import uuid
 
 import arrow
-from tabulate import tabulate
-from cassandra import ConsistencyLevel
-from cassandra.cluster import Cluster
-from cassandra.auth import PlainTextAuthProvider
-from cstarmigrate import (Migration, FailedMigration, InconsistentState,
-                          UnknownMigration, ConcurrentMigration)
-from cstarmigrate.cql import CQLSplitter
+import cassandra
+import cassandra.auth
+import cassandra.cluster
+import tabulate
+
+from . import (
+    ConcurrentMigration,
+    FailedMigration,
+    InconsistentState,
+    Migration,
+    UnknownMigration,
+)
+from .cql import CQLSplitter
 
 
 CREATE_MIGRATIONS_TABLE = """
@@ -88,7 +88,7 @@ def cassandra_ddl_repr(data):
 def confirmation_required(func):
     """Asks for the user's confirmation before calling the decorated function.
     This step is ignored when the script is not run from a TTY."""
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(self, opts, *args, **kwargs):
         cli_mode = getattr(opts, 'cli_mode', False)
         if cli_mode and not opts.assume_yes:
@@ -125,7 +125,7 @@ class Migrator(object):
             raise ValueError("Invalid profile name '{}'".format(profile))
 
         if user:
-            auth_provider = PlainTextAuthProvider(user, password)
+            auth_provider = cassandra.auth.PlainTextAuthProvider(user, password)
         else:
             auth_provider = None
 
@@ -137,7 +137,7 @@ class Migrator(object):
         else:
             ssl_options = None
 
-        self.cluster = Cluster(
+        self.cluster = cassandra.cluster.Cluster(
             contact_points=hosts,
             port=port,
             auth_provider=auth_provider,
@@ -176,8 +176,8 @@ class Migrator(object):
     def _init_session(self):
         if not self._session:
             s = self._session = self.cluster.connect()
-            s.default_consistency_level = ConsistencyLevel.ALL
-            s.default_serial_consistency_level = ConsistencyLevel.SERIAL
+            s.default_consistency_level = cassandra.ConsistencyLevel.ALL
+            s.default_serial_consistency_level = cassandra.ConsistencyLevel.SERIAL
             s.default_timeout = 120
 
     @property
@@ -305,7 +305,7 @@ class Migrator(object):
         cur_versions = sorted(cur_versions, key=lambda v: v.version)
 
         last_version = None
-        version_pairs = zip_longest(cur_versions, migrations)
+        version_pairs = itertools.zip_longest(cur_versions, migrations)
 
         # Work through ordered pairs of (existing version, migration), so that
         # stored versions and expected migrations can be compared for any
@@ -580,7 +580,7 @@ class Migrator(object):
                                     ignore_concurrent=True)
         latest_version = len(self.config.migrations)
 
-        print(tabulate((
+        print(tabulate.tabulate((
             ('Keyspace:', self.config.keyspace),
             ('Migrations table:', self.config.migrations_table),
             ('Current DB version:', last_version),
@@ -600,7 +600,7 @@ class Migrator(object):
                     version.state,
                     date,
                     checksum))
-            print(tabulate(data, headers=['#', 'Name', 'State',
+            print(tabulate.tabulate(data, headers=['#', 'Name', 'State',
                                           'Date applied', 'Checksum']))
 
         if pending_migrations:
@@ -613,4 +613,4 @@ class Migrator(object):
                     str(version),
                     migration.name,
                     checksum))
-            print(tabulate(data, headers=['#', 'Name', 'Checksum']))
+            print(tabulate.tabulate(data, headers=['#', 'Name', 'Checksum']))

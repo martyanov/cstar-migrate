@@ -1,16 +1,15 @@
-# encoding: utf-8
-
-from __future__ import (absolute_import, division,
-                        print_function, unicode_literals)
-
-import sys
-import os
-import logging
 import argparse
+import logging
+import os
 import subprocess
+import sys
 
-from cstarmigrate import (Migrator, Migration, MigrationConfig,
-                          MigrationError)
+from . import (
+    Migration,
+    MigrationConfig,
+    MigrationError,
+    Migrator,
+)
 
 
 def open_file(filename):
@@ -30,7 +29,7 @@ def open_file(filename):
 
 def main():
     logging.basicConfig(level=logging.INFO)
-    logging.getLogger("cassandra.policies").setLevel(logging.ERROR)
+    logging.getLogger('cassandra.policies').setLevel(logging.ERROR)
 
     parser = argparse.ArgumentParser(
         description='Simple Cassandra migration tool')
@@ -134,12 +133,17 @@ def main():
 
         print(os.path.basename(new_path))
     else:
-        with Migrator(config=config, profile=opts.profile,
-                      hosts=opts.hosts.split(','), port=opts.port,
-                      user=opts.user, password=opts.password,
-                      host_cert_path=opts.ssl_cert,
-                      client_key_path=opts.ssl_client_private_key,
-                      client_cert_path=opts.ssl_client_cert) as migrator:
+        with Migrator(
+            config=config,
+            profile=opts.profile,
+            hosts=opts.hosts.split(','),
+            port=opts.port,
+            user=opts.user,
+            password=opts.password,
+            host_cert_path=opts.ssl_cert,
+            client_key_path=opts.ssl_client_private_key,
+            client_cert_path=opts.ssl_client_cert,
+        ) as migrator:
             cmd_method = getattr(migrator, opts.action)
             if not callable(cmd_method):
                 print('Error: invalid command', file=sys.stderr)

@@ -1,9 +1,3 @@
-# encoding: utf-8
-# flake8: noqa: E402,F401
-
-from __future__ import print_function, unicode_literals
-
-
 class MigrationError(RuntimeError):
     """Base class for migration errors"""
     pass
@@ -56,7 +50,6 @@ class UnknownMigration(MigrationError):
             'migration (version {}): {} '.format(version, name))
 
 
-
-from .migration import Migration
-from .config import MigrationConfig
-from .migrator import Migrator
+from .config import MigrationConfig  # noqa
+from .migration import Migration  # noqa
+from .migrator import Migrator  # noqa

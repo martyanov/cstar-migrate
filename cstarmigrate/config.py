@@ -1,10 +1,5 @@
-# encoding: utf-8
-
-from __future__ import (absolute_import, division,
-                        print_function, unicode_literals)
-from builtins import str, open
-
 import os
+
 import yaml
 
 from .migration import Migration
@@ -46,7 +41,7 @@ def _assert_type(data, key, tpe, default=None):
     return value
 
 
-class MigrationConfig(object):
+class MigrationConfig:
     """
     Data class containing all configuration for migration operations
 

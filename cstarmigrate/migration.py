@@ -1,23 +1,16 @@
-# encoding: utf-8
-
-from __future__ import (absolute_import, division,
-                        print_function, unicode_literals)
-from builtins import open, bytes
-
-import re
-import os
+import collections
 import glob
 import hashlib
 import io
-from collections import namedtuple
+import os
+import re
 
 import arrow
 
 
-class Migration(namedtuple('Migration',
-                           'path name is_python content checksum')):
-    """
-    Data class representing the specification of a migration
+class Migration(collections.namedtuple('Migration',
+                                       'path name is_python content checksum')):
+    """Data class representing the specification of a migration
 
     Migrations can take the form of CQL files or Python scripts, and usually
     have names starting with a version string that can be ordered.
@@ -26,7 +19,7 @@ class Migration(namedtuple('Migration',
 
     __slots__ = ()
 
-    class State(object):
+    class State:
         """Possible states of a migration, as saved in C*"""
 
         SUCCEEDED = 'SUCCEEDED'

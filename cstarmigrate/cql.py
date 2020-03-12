@@ -13,7 +13,7 @@ OTHER = 5
 WHITESPACE = 6
 
 
-class CQLSplitter(object):
+class CQLSplitter:
     """Makeshift CQL parser that can only split up multiple statements.
 
     C* does not accept multiple DDL queries as a single string, as it can with
