@@ -13,27 +13,27 @@ help:
 	@echo "  clean      - clean up project environment and all the build artifacts"
 
 deps:
-	python -m pip install pip==20.0.2 setuptools==46.0.0 wheel==0.34.2
-	python -m pip install -e .[dev,test]
+	python3 -m pip install pip==20.0.2 setuptools==46.0.0 wheel==0.34.2
+	python3 -m pip install -e .[dev,test]
 
 lint:
-	python -m flake8 cstarmigrate tests
+	python3 -m flake8 cstarmigrate tests
 
 test:
-	python -m pytest
+	python3 -m pytest
 
 testreport:
-	python -m pytest --cov-report=html
+	python3 -m pytest --cov-report=html
 	xdg-open htmlcov/index.html
 
 build:
-	python setup.py sdist bdist_wheel
+	python3 setup.py sdist bdist_wheel
 
 upload: build
-	python -m twine upload dist/*
+	python3 -m twine upload dist/*
 
-outdated: bootstrap
-	python -m pip list --outdated --format=columns
+outdated:
+	python3 -m pip list --outdated --format=columns
 
 clean:
 	rm -rf *.egg .eggs *.egg-info build dist htmlcov log py*
