@@ -9,8 +9,8 @@ import logging
 import argparse
 import subprocess
 
-from cassandra_migrate import (Migrator, Migration, MigrationConfig,
-                               MigrationError)
+from cstarmigrate import (Migrator, Migration, MigrationConfig,
+                          MigrationError)
 
 
 def open_file(filename):

@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 
 from yaml import Loader, SafeLoader
-from cassandra_migrate.cli import main
+from cstarmigrate.cli import main
 
 # Force YAML to load strings as unicode
 def construct_yaml_str(self, node):

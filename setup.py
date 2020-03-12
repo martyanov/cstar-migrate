@@ -6,7 +6,7 @@ VERSION = '0.3.3'
 
 setuptools.setup(
     name='cstar-migrate',
-    packages=['cassandra_migrate'],
+    packages=['cstarmigrate'],
     version=VERSION,
     description='Simple Cassandra database migration program.',
     long_description=open('README.rst').read(),

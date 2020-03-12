@@ -2,7 +2,7 @@
 
 set -e
 
-flake8 cassandra_migrate
+flake8 cstarmigrate
 coverage erase
-coverage run --source cassandra_migrate -m py.test
-coverage report --include='cassandra_migrate/**' --omit='cassandra_migrate/test/**'
+coverage run --source cstarmigrate -m py.test
+coverage report --include='cstarmigrate/**' --omit='ctarmigrate/test/**'
