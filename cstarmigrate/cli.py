@@ -9,8 +9,8 @@ import logging
 import argparse
 import subprocess
 
-from cassandra_migrate import (Migrator, Migration, MigrationConfig,
-                               MigrationError)
+from cstarmigrate import (Migrator, Migration, MigrationConfig,
+                          MigrationError)
 
 
 def open_file(filename):
@@ -42,7 +42,7 @@ def main():
                         help='Connection username')
     parser.add_argument('-P', '--password',
                         help='Connection password')
-    parser.add_argument('-c', '--config-file', default='cassandra-migrate.yml',
+    parser.add_argument('-c', '--config-file', default='cstar-migrate.yml',
                         help='Path to configuration file')
     parser.add_argument('-m', '--profile', default='dev',
                         help='Name of keyspace profile to use')
@@ -51,20 +51,20 @@ def main():
                         File path of .pem or .crt containing certificate of the
                         cassandra host you are connecting to (or the
                         certificate of the CA that signed the host certificate).
-                         If this option is provided, cassandra-migrate will use
+                        If this option is provided, cstar-migrate will use
                         ssl to connect to the cluster. If this option is not
                         provided, the -k and -t options will be ignored. """)
     parser.add_argument('-k', '--ssl-client-private-key', default=None,
                         help="""
                         File path of the .key file containing the private key
-                        of the host on which the cassandra-migrate command is
+                        of the host on which the cstar-migrate command is
                         run. This option must be used in conjuction with the
                         -t option. This option is ignored unless the -s
                         option is provided.""")
     parser.add_argument('-t', '--ssl-client-cert', default=None,
                         help="""
                         File path of the .crt file containing the public
-                        certificate of the host on which the cassandra-migrate
+                        certificate of the host on which the cstar-migrate
                         command is run. This certificate (or the CA that signed
                         it) must be trusted by the cassandra host that
                         migrations are run against. This option must be used in

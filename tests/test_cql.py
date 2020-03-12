@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 import pytest
 
-from cassandra_migrate.cql import CqlSplitter
+from cstarmigrate.cql import CqlSplitter
 
 
 @pytest.mark.parametrize('cql,statements', [

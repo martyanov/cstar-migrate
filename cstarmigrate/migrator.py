@@ -19,9 +19,9 @@ from tabulate import tabulate
 from cassandra import ConsistencyLevel
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
-from cassandra_migrate import (Migration, FailedMigration, InconsistentState,
-                               UnknownMigration, ConcurrentMigration)
-from cassandra_migrate.cql import CqlSplitter
+from cstarmigrate import (Migration, FailedMigration, InconsistentState,
+                          UnknownMigration, ConcurrentMigration)
+from cstarmigrate.cql import CqlSplitter
 
 
 CREATE_MIGRATIONS_TABLE = """
