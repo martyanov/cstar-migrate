@@ -16,11 +16,11 @@ setuptools.setup(
     author_email='andrey@martyanov.com',
     license='MIT',
     install_requires=[
+        'arrow',
         'cassandra-driver',
         'future',
-        'PyYAML<5.0',
-        'arrow',
-        'tabulate'
+        'pyyaml<5.0',
+        'tabulate',
     ],
     keywords='cassandra schema migration',
     entry_points={
