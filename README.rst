@@ -6,7 +6,7 @@ Simple Cassandra schema migration tool.
 Installation
 ------------
 
-Run ``pip install cstar-migrate``, or ``python ./setup.py install``
+Run ``pip install cstar-migrate``
 
 Reasoning
 ---------
@@ -14,7 +14,7 @@ Reasoning
 Unlike other available tools, this one:
 
 - Written in Python for easy installation
-- Does not require ``cqlsh``, just the Python driver
+- Does not require ``cqlsh``, just the Cassandra Python driver
 - Supports baselining existing database to given versions
 - Supports partial advancement
 - Supports locking for concurrent instances using Lightweight Transactions
@@ -69,7 +69,7 @@ For example
          Version {next_version} - {date}
 
          {full_desc} */
-   
+
     # Custom initial migration content for python scripts
     new_python_migration_text: |
       # Cassandra migration for keyspace {keyspace}.
@@ -84,7 +84,7 @@ For example
           """
 
           print("Cassandra session: ", session)
-    
+
 
 ``new_migration_name`` is a new-style Python format string, which can use the
 following parameters:
@@ -175,13 +175,13 @@ Examples:
 .. code:: bash
 
     # Migrate to the latest database version using the default configuration file,
-    # connecting to Cassandra in the local machine.
+    # connecting to Cassandra in the local machine
     cstar-migrate -H 127.0.0.1 migrate
 
-    # Migrate to version 2 using a specific config file.
+    # Migrate to version 2 using a specific config file
     cstar-migrate -c mydb.yml migrate 2
 
-    # Migrate to a version by name.
+    # Migrate to a version by name
     cstar-migrate migrate v005_my_changes.cql
 
     # Force migration after a failure
