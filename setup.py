@@ -8,7 +8,7 @@ setuptools.setup(
     name='cstar-migrate',
     packages=['cstarmigrate'],
     version=VERSION,
-    description='Simple Cassandra database migration program.',
+    description='Simple Cassandra database migration tool',
     long_description=open('README.rst').read(),
     url='https://github.com/martyanov/cstar-migrate',
     download_url='https://github.com/martyanov/cstar-migrate/archive/{}.tar.gz'.format(VERSION),
@@ -22,6 +22,10 @@ setuptools.setup(
         'arrow',
         'tabulate'
     ],
-    scripts=['bin/cstar-migrate'],
     keywords='cassandra schema migration',
+    entry_points={
+        'console_scripts': [
+            'cstar-migrate=cstarmigrate.__main__:main',
+        ],
+    },
 )
