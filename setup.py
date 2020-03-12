@@ -22,6 +22,18 @@ setuptools.setup(
         'pyyaml<5.0',
         'tabulate',
     ],
+    extras_require={
+        'dev': [
+            'bumpversion==0.5.3',
+            'flake8==3.7.9',
+            'twine==3.1.1',
+        ],
+        'test': [
+            'pytest-cov==2.8.1',
+            'pytest==5.3.5',
+            'tox==3.14.5',
+        ],
+    },
     keywords='cassandra schema migration',
     entry_points={
         'console_scripts': [
