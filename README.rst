@@ -6,7 +6,7 @@ Simple Cassandra schema migration tool.
 Installation
 ------------
 
-Run ``pip install cassandra-migrate``, or ``python ./setup.py install``
+Run ``pip install cstar-migrate``, or ``python ./setup.py install``
 
 Reasoning
 ---------
@@ -146,13 +146,13 @@ Common parameters:
                         will be ignored.
   -k SSL_CLIENT_PRIVATE_KEY, --ssl-client-private-key SSL_CLIENT_PRIVATE_KEY
                         File path of the .key file containing the private key
-                        of the host on which the cassandra-migrate command is
+                        of the host on which the cstar-migrate command is
                         run. This option must be used in conjuction with the
                         -t option. This option is ignored unless the -s option
                         is provided.
   -t SSL_CLIENT_CERT, --ssl-client-cert SSL_CLIENT_CERT
                         File path of the .crt file containing the public
-                        certificate of the host on which the cassandra-migrate
+                        certificate of the host on which the cstar-migrate
                         command is run. This certificate (or the CA that
                         signed it) must be trusted by the cassandra host that
                         migrations are run against. This option must be used
@@ -176,16 +176,16 @@ Examples:
 
     # Migrate to the latest database version using the default configuration file,
     # connecting to Cassandra in the local machine.
-    cassandra-migrate -H 127.0.0.1 migrate
+    cstar-migrate -H 127.0.0.1 migrate
 
     # Migrate to version 2 using a specific config file.
-    cassandra-migrate -c mydb.yml migrate 2
+    cstar-migrate -c mydb.yml migrate 2
 
     # Migrate to a version by name.
-    cassandra-migrate migrate v005_my_changes.cql
+    cstar-migrate migrate v005_my_changes.cql
 
     # Force migration after a failure
-    cassandra-migrate migrate 2 --force
+    cstar-migrate migrate 2 --force
 
 reset
 ~~~~~
@@ -198,10 +198,10 @@ Examples:
 .. code:: bash
 
     # Reset the database to the latest version
-    cassandra-migrate reset
+    cstar-migrate reset
 
     # Reset the database to a specifis version
-    cassandra-migrate reset 3
+    cstar-migrate reset 3
 
 baseline
 ~~~~~~~~
@@ -217,10 +217,10 @@ Examples:
 .. code:: bash
 
     # Baseline the existing database to the latest version
-    cassandra-migrate baseline
+    cstar-migrate baseline
 
     # Baseline the existing database to a specific version
-    cassandra-migrate baseline 5
+    cstar-migrate baseline 5
 
 status
 ~~~~~~
@@ -231,7 +231,7 @@ Example:
 
 .. code:: bash
 
-    cassandra-migrate status
+    cstar-migrate status
 
 generate
 ~~~~~~~~
@@ -250,9 +250,9 @@ Example:
 
 .. code:: bash
 
-    cassandra-migrate generate "My migration description"
+    cstar-migrate generate "My migration description"
 
-    cassandra-migrate generate "My migration description" --python
+    cstar-migrate generate "My migration description" --python
 
 
 License (MIT)

@@ -22,6 +22,6 @@ setuptools.setup(
         'arrow',
         'tabulate'
     ],
-    scripts=['bin/cassandra-migrate'],
+    scripts=['bin/cstar-migrate'],
     keywords='cassandra schema migration',
 )
