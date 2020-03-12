@@ -21,7 +21,7 @@ from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 from cstarmigrate import (Migration, FailedMigration, InconsistentState,
                           UnknownMigration, ConcurrentMigration)
-from cstarmigrate.cql import CqlSplitter
+from cstarmigrate.cql import CQLSplitter
 
 
 CREATE_MIGRATIONS_TABLE = """
@@ -397,7 +397,7 @@ class Migrator(object):
 
         self.logger.info('Applying cql migration')
 
-        statements = CqlSplitter.split(migration.content)
+        statements = CQLSplitter.split(migration.content)
 
         try:
             if statements:
