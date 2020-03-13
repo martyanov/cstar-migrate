@@ -76,7 +76,7 @@ class Migration(collections.namedtuple('Migration',
         date = arrow.utcnow()
 
         format_args = {
-            'desc': clean_desc,
+            'desc': clean_desc.lower(),
             'full_desc': description,
             'next_version': next_version,
             'date': date,
