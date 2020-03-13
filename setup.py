@@ -15,12 +15,12 @@ setuptools.setup(
     author='Andrey Martyanov',
     author_email='andrey@martyanov.com',
     license='MIT',
-    python_requires='>=3.7, <4',
+    python_requires='>=3.7,<4.0',
     install_requires=[
-        'arrow',
-        'cassandra-driver',
+        'arrow<0.16',
+        'cassandra-driver<4.0',
         'pyyaml<5.0',
-        'tabulate',
+        'tabulate<0.9',
     ],
     extras_require={
         'dev': [
