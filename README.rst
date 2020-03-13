@@ -1,12 +1,12 @@
 cstar-migrate
 =============
 
-Simple Cassandra schema migration tool.
+Cassandra schema migration tool.
 
 Installation
 ------------
 
-Run ``pip install cstar-migrate``
+Run ``pip install cstar-migrate``.
 
 Reasoning
 ---------

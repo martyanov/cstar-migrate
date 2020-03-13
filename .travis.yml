@@ -2,15 +2,11 @@ dist: trusty
 sudo: false
 language: python
 env:
-  # cassandra-driver takes ages to install with Cython enabled
   - CASS_DRIVER_NO_CYTHON=1
 matrix:
   include:
-    - python: "2.7"
-    - python: "3.4"
-    - python: "3.5"
-    - python: "3.6"
-    - python: pypy3.5-5.8.0
+    - python: "3.7"
+    - python: "3.8"
 cache:
   - pip
 install:

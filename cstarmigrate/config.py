@@ -1,10 +1,5 @@
-# encoding: utf-8
-
-from __future__ import (absolute_import, division,
-                        print_function, unicode_literals)
-from builtins import str, open
-
 import os
+
 import yaml
 
 from .migration import Migration
@@ -38,17 +33,16 @@ def execute(session):
 
 
 def _assert_type(data, key, tpe, default=None):
-    """Extract and verify if a key in a dictionary has a given type"""
+    """Extract and verify if a key in a dictionary has a given type."""
     value = data.get(key, default)
     if not isinstance(value, tpe):
-        raise ValueError("Config error: {}: expected {}, found {}".format(
-            key, tpe, type(value)))
+        raise ValueError(f'Config error: {key}: expected {tpe}, found {type(value)}')
     return value
 
 
-class MigrationConfig(object):
+class MigrationConfig:
     """
-    Data class containing all configuration for migration operations
+    Data class containing all configuration for migration operations.
 
     Configuration includes:
     - Keyspace to be managed
@@ -112,7 +106,7 @@ class MigrationConfig(object):
 
     @classmethod
     def load(cls, path):
-        """Load a migration config from a file, using it's dir. as base path"""
+        """Load a migration config from a file, using it's dir. as base path."""
         with open(path, 'r', encoding='utf-8') as f:
             config = yaml.load(f)
 
