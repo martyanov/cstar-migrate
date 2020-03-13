@@ -24,7 +24,6 @@ setuptools.setup(
     ],
     extras_require={
         'dev': [
-            'bumpversion==0.5.3',
             'flake8==3.7.9',
             'twine==3.1.1',
         ],
