@@ -14,11 +14,11 @@ import cassandra.auth
 import cassandra.cluster
 import tabulate
 
+from . import migration as cstar_migration
 from . import (
     ConcurrentMigration,
     FailedMigration,
     InconsistentState,
-    Migration,
     UnknownMigration,
 )
 from .cql import CQLSplitter
@@ -288,28 +288,26 @@ class Migrator(object):
                            ignore_concurrent=False):
         """Verify if the version history persisted in Cassandra matches the migrations.
 
-        Migrations with corresponding DB versions must have the same content
-        and name.
-        Every DB version must have a corresponding migration.
-        Migrations without corresponding DB versions are considered pending,
-        and returned as a result.
+        Migrations with corresponding DB versions must have the same content and name.
+        Every DB version must have a corresponding migration. Migrations without
+        corresponding DB versions are considered pending, and returned as a result.
 
         Returns a list of tuples of (version, migration), with version starting
         from 1 and incrementing linearly.
         """
 
         # Load all the currently existing versions and sort them by version
-        # number, as Cassandra can only sort it for us by partition.
-        cur_versions = self._execute(self._q(
-            'SELECT * FROM "{keyspace}"."{table}"'))
+        # number, as Cassandra can only sort it for us by partition
+        cur_versions = self._execute(
+            self._q('SELECT * FROM "{keyspace}"."{table}"'),
+        )
         cur_versions = sorted(cur_versions, key=lambda v: v.version)
 
         last_version = None
         version_pairs = itertools.zip_longest(cur_versions, migrations)
 
-        # Work through ordered pairs of (existing version, migration), so that
-        # stored versions and expected migrations can be compared for any
-        # differences.
+        # Work through ordered pairs of (existing version, expected_migration), so that
+        # stored versions and expected migrations can be compared for any differences
         for i, (version, migration) in enumerate(version_pairs, 1):
             # If version is empty, the migration has not yet been applied.
             # Keep track of the first such version, and append it to the
@@ -319,12 +317,12 @@ class Migrator(object):
 
             # If migration is empty, we have a version in the database with
             # no corresponding file. That might mean we're running the wrong
-            # migration or have an out-of-date state, so we must fail.
+            # migration or have an out-of-date state, so we must fail
             if not migration:
                 raise UnknownMigration(version.version, version.name)
 
-            # A migration was previously run and failed.
-            if version.state == Migration.State.FAILED:
+            # A migration was previously run and failed
+            if version.state == cstar_migration.Migration.State.FAILED:
                 if ignore_failed:
                     break
 
@@ -332,16 +330,18 @@ class Migrator(object):
 
             last_version = version.version
 
-            # A migration is in progress.
-            if version.state == Migration.State.IN_PROGRESS:
+            # A migration is in progress
+            if version.state == cstar_migration.Migration.State.IN_PROGRESS:
                 if ignore_concurrent:
                     break
                 raise ConcurrentMigration(version.version, version.name)
 
-            # A stored version's migrations differs from the one in the FS.
-            if version.content != migration.content or \
-               version.name != migration.name or \
-               bytearray(version.checksum) != bytearray(migration.checksum):
+            # A stored version's migrations differs from the one in the FS
+            if (
+                    version.content != migration.content or
+                    version.name != migration.name or
+                    bytearray(version.checksum) != bytearray(migration.checksum)
+            ):
                 raise InconsistentState(migration, version)
 
         if not last_version:
@@ -378,8 +378,15 @@ class Migrator(object):
         version_id = uuid.uuid4()
         result = self._execute(
             self._q(CREATE_DB_VERSION),
-            (version_id, version, migration.name, migration.content,
-             bytearray(migration.checksum), Migration.State.IN_PROGRESS))
+            (
+                version_id,
+                version,
+                migration.name,
+                migration.content,
+                bytearray(migration.checksum),
+                cstar_migration.Migration.State.IN_PROGRESS,
+            ),
+        )
 
         if not result or not result[0].applied:
             raise ConcurrentMigration(version, migration.name)
@@ -435,7 +442,7 @@ class Migrator(object):
         self.logger.info(f'Advancing to version {version}')
 
         version_uuid = self._create_version(version, migration)
-        new_state = Migration.State.FAILED
+        new_state = cstar_migration.Migration.State.FAILED
         sys.path.append(self.config.migrations_path)
 
         result = None
@@ -453,13 +460,13 @@ class Migrator(object):
             self.logger.exception('Failed to execute migration')
             raise FailedMigration(version, migration.name)
         else:
-            new_state = (Migration.State.SUCCEEDED if not skip
-                         else Migration.State.SKIPPED)
+            new_state = (cstar_migration.Migration.State.SUCCEEDED if not skip
+                         else cstar_migration.Migration.State.SKIPPED)
         finally:
             self.logger.info(f'Finalizing migration version with state {new_state!r}')
             result = self._execute(
                 self._q(FINALIZE_DB_VERSION),
-                (new_state, version_uuid, Migration.State.IN_PROGRESS))
+                (new_state, version_uuid, cstar_migration.Migration.State.IN_PROGRESS))
 
         if not result or not result[0].applied:
             raise ConcurrentMigration(version, migration.name)
@@ -469,7 +476,7 @@ class Migrator(object):
             return
 
         last_version = cur_versions[-1]
-        if last_version.state != Migration.State.FAILED:
+        if last_version.state != cstar_migration.Migration.State.FAILED:
             return
 
         self.logger.warn(
@@ -479,14 +486,14 @@ class Migrator(object):
 
         result = self._execute(
             self._q(DELETE_DB_VERSION),
-            (last_version.id, Migration.State.FAILED))
+            (last_version.id, cstar_migration.Migration.State.FAILED),
+        )
 
         if not result[0].applied:
             raise ConcurrentMigration(last_version.version,
                                       last_version.name)
 
-    def _advance(self, migrations, target, cur_versions, skip=False,
-                 force=False):
+    def _advance(self, migrations, target, cur_versions, skip=False, force=False):
         """Apply all necessary migrations to reach a target version."""
         if force:
             self._cleanup_previous_versions(cur_versions)
@@ -565,17 +572,17 @@ class Migrator(object):
             )
             return
 
-        last_version, cur_versions, pending_migrations = \
-            self._verify_migrations(self.config.migrations,
-                                    ignore_failed=True,
-                                    ignore_concurrent=True)
+        last_version, cur_versions, pending_migrations = self._verify_migrations(
+            self.config.migrations, ignore_failed=True, ignore_concurrent=True)
         latest_version = len(self.config.migrations)
 
-        print(tabulate.tabulate((
-            ('Keyspace:', self.config.keyspace),
-            ('Migrations table:', self.config.migrations_table),
-            ('Current DB version:', last_version),
-            ('Latest DB version:', latest_version)),
+        print(tabulate.tabulate(
+            (
+                ('Keyspace:', self.config.keyspace),
+                ('Migrations table:', self.config.migrations_table),
+                ('Current DB version:', last_version),
+                ('Latest DB version:', latest_version),
+            ),
             tablefmt='plain'))
 
         if cur_versions:
@@ -585,12 +592,9 @@ class Migrator(object):
             for version in cur_versions:
                 checksum = self._bytes_to_hex(version.checksum)
                 date = arrow.get(version.applied_at).format()
-                data.append((
-                    str(version.version),
-                    version.name,
-                    version.state,
-                    date,
-                    checksum))
+                data.append(
+                    (str(version.version), version.name, version.state, date, checksum),
+                )
             print(tabulate.tabulate(data, headers=['#', 'Name', 'State',
                                                    'Date applied', 'Checksum']))
 
@@ -600,8 +604,7 @@ class Migrator(object):
             data = []
             for version, migration in pending_migrations:
                 checksum = self._bytes_to_hex(migration.checksum)
-                data.append((
-                    str(version),
-                    migration.name,
-                    checksum))
+                data.append(
+                    (str(version), migration.name, checksum),
+                )
             print(tabulate.tabulate(data, headers=['#', 'Name', 'Checksum']))

@@ -46,8 +46,3 @@ class UnknownMigration(MigrationError):
         super(UnknownMigration, self).__init__(
             f'Found version in database without corresponding '
             f'migration (version {version}): {name}')
-
-
-from .config import MigrationConfig  # noqa
-from .migration import Migration  # noqa
-from .migrator import Migrator  # noqa

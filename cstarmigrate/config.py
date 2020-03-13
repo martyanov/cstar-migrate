@@ -2,7 +2,7 @@ import os
 
 import yaml
 
-from .migration import Migration
+from . import migration as cstar_migration
 
 
 DEFAULT_NEW_CQL_MIGRATION_TEXT = """
@@ -74,7 +74,7 @@ class MigrationConfig:
         migrations_path = _assert_type(data, 'migrations_path', str)
         self.migrations_path = os.path.join(base_path, migrations_path)
 
-        self.migrations = Migration.glob_all(
+        self.migrations = cstar_migration.Migration.glob_all(
             self.migrations_path, '*.cql', '*.py')
 
         self.migrations_table = _assert_type(data, 'migrations_table', str,

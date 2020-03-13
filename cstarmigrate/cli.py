@@ -4,11 +4,11 @@ import os
 import subprocess
 import sys
 
+from . import config as cstar_config
+from . import migration as cstar_migration
+from . import migrator as cstar_migrator
 from . import (
-    Migration,
-    MigrationConfig,
     MigrationError,
-    Migrator,
 )
 
 
@@ -123,10 +123,10 @@ def main():
     # Enable user confirmation if we're running the script from a TTY
     opts.cli_mode = sys.stdin.isatty()
 
-    config = MigrationConfig.load(opts.config_file)
+    config = cstar_config.MigrationConfig.load(opts.config_file)
 
     if opts.action == 'generate':
-        new_path = Migration.generate(
+        new_path = cstar_migration.Migration.generate(
             config=config,
             description=opts.description,
             output=opts.migration_type,
@@ -136,7 +136,7 @@ def main():
 
         print(os.path.basename(new_path))
     else:
-        with Migrator(
+        with cstar_migrator.Migrator(
             config=config,
             profile=opts.profile,
             hosts=opts.hosts.split(','),
