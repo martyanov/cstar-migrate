@@ -1,7 +1,7 @@
 cstar-migrate
 =============
 
-Simple Cassandra schema migration tool.
+Cassandra schema migration tool.
 
 Installation
 ------------
