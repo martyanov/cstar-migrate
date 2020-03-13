@@ -36,4 +36,4 @@ outdated:
 	python3 -m pip list --outdated --format=columns
 
 clean:
-	rm -rf *.egg .eggs *.egg-info build dist htmlcov log py*
+	rm -rf *.egg .eggs *.egg-info build dist htmlcov log py* .coverage .package.lock .tmp
