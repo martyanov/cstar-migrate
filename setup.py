@@ -6,7 +6,7 @@ VERSION = '0.4.0a2'
 
 setuptools.setup(
     name='cstar-migrate',
-    packages=['cstarmigrate'],
+    packages=setuptools.find_packages(),
     version=VERSION,
     description='Cassandra schema migration tool',
     long_description=open('README.rst').read(),
