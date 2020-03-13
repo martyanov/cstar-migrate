@@ -1,6 +1,24 @@
 cstar-migrate
 =============
 
+.. start-inclusion-marker-do-not-remove
+
+.. image:: https://travis-ci.org/martyanov/cstar-migrate.svg?branch=master
+   :alt: Build Status
+   :target: https://travis-ci.org/martyanov/cstar-migrate
+
+.. image:: https://img.shields.io/pypi/v/cstar-migrate.svg
+   :alt: PyPI Version
+   :target: https://pypi.python.org/pypi/cstar-migrate
+
+.. image:: https://img.shields.io/pypi/pyversions/cstar-migrate.svg
+   :alt: Supported Python Versions
+   :target: https://pypi.python.org/pypi/cstar-migrate
+
+.. image:: https://img.shields.io/pypi/l/cstar-migrate.svg
+   :alt: License
+   :target: https://pypi.python.org/pypi/cstar-migrate
+
 Cassandra schema migration tool.
 
 Installation
