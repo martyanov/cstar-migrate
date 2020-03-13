@@ -31,8 +31,7 @@ def main():
     logging.basicConfig(level=logging.INFO)
     logging.getLogger('cassandra.policies').setLevel(logging.ERROR)
 
-    parser = argparse.ArgumentParser(
-        description='Simple Cassandra migration tool')
+    parser = argparse.ArgumentParser(description='Cassandra schema migration tool')
     parser.add_argument('-H', '--hosts', default='127.0.0.1',
                         help='Comma-separated list of contact points')
     parser.add_argument('-p', '--port', type=int, default=9042,
@@ -120,14 +119,18 @@ def main():
                          help='Database version to baseline/reset/migrate to')
 
     opts = parser.parse_args()
-    # enable user confirmation if we're running the script from a TTY
+
+    # Enable user confirmation if we're running the script from a TTY
     opts.cli_mode = sys.stdin.isatty()
+
     config = MigrationConfig.load(opts.config_file)
 
     if opts.action == 'generate':
-        new_path = Migration.generate(config=config,
-                                      description=opts.description,
-                                      output=opts.migration_type)
+        new_path = Migration.generate(
+            config=config,
+            description=opts.description,
+            output=opts.migration_type,
+        )
         if sys.stdin.isatty():
             open_file(new_path)
 
@@ -152,5 +155,5 @@ def main():
             try:
                 cmd_method(opts)
             except MigrationError as e:
-                print('Error: {}'.format(e), file=sys.stderr)
+                print(f'Error: {e!r}', file=sys.stderr)
                 sys.exit(1)

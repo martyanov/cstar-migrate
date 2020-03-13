@@ -11,7 +11,7 @@ setuptools.setup(
     description='Cassandra schema migration tool',
     long_description=open('README.rst').read(),
     url='https://github.com/martyanov/cstar-migrate',
-    download_url='https://github.com/martyanov/cstar-migrate/archive/{}.tar.gz'.format(VERSION),
+    download_url=f'https://github.com/martyanov/cstar-migrate/archive/{VERSION}.tar.gz',
     author='Andrey Martyanov',
     author_email='andrey@martyanov.com',
     license='MIT',

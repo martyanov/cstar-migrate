@@ -63,7 +63,7 @@ DELETE FROM "{keyspace}"."{table}" WHERE id = %s IF state = %s
 
 
 def cassandra_ddl_repr(data):
-    """Generate a string representation of a map suitable for use in C* DDL"""
+    """Generate a string representation of a map suitable for use in Cassandra DDL."""
     if isinstance(data, str):
         return "'" + re.sub(r"(?<!\\)'", "\\'", data) + "'"
     elif isinstance(data, dict):
@@ -87,13 +87,15 @@ def cassandra_ddl_repr(data):
 
 def confirmation_required(func):
     """Asks for the user's confirmation before calling the decorated function.
-    This step is ignored when the script is not run from a TTY."""
+
+    This step is ignored when the script is not run from a TTY.
+    """
     @functools.wraps(func)
     def wrapper(self, opts, *args, **kwargs):
         cli_mode = getattr(opts, 'cli_mode', False)
         if cli_mode and not opts.assume_yes:
-            confirmation = input("The {} operation cannot be undone. "
-                                 "Are you sure? [y/N] ".format(func.__name__))
+            confirmation = input(f'The {func.__name__!r} operation cannot be undone. '
+                                 'Are you sure? [y/N] ')
             if not confirmation.lower().startswith("y"):
                 return
         opts.assume_yes = True
@@ -102,7 +104,7 @@ def confirmation_required(func):
 
 
 class Migrator(object):
-    """Execute migration operations in a C* database based on configuration.
+    """Execute migration operations in a Cassandra database based on configuration.
 
     `opts` must contain at least the following attributes:
     - config_file: path to a YAML file containing the configuration
@@ -112,7 +114,7 @@ class Migrator(object):
     - port: connection port
     """
 
-    logger = logging.getLogger("Migrator")
+    logger = logging.getLogger('Migrator')
 
     def __init__(self, config, profile='dev', hosts=['127.0.0.1'], port=9042,
                  user=None, password=None, host_cert_path=None,
@@ -122,7 +124,7 @@ class Migrator(object):
         try:
             self.current_profile = self.config.profiles[profile]
         except KeyError:
-            raise ValueError("Invalid profile name '{}'".format(profile))
+            raise ValueError(f'Invalid profile name {profile!r}')
 
         if user:
             auth_provider = cassandra.auth.PlainTextAuthProvider(user, password)
@@ -182,7 +184,7 @@ class Migrator(object):
 
     @property
     def session(self):
-        """Initialize and configure a  C* driver session if needed"""
+        """Initialize and configure a  Cassandra driver session if needed."""
 
         self._check_cluster()
         self._init_session()
@@ -190,8 +192,7 @@ class Migrator(object):
         return self._session
 
     def _get_target_version(self, v):
-        """
-        Parses a version specifier to an actual numeric migration version
+        """Parses a version specifier to an actual numeric migration version.
 
         `v` might be:
         - None: the latest version is chosen
@@ -220,19 +221,18 @@ class Migrator(object):
         return num
 
     def _q(self, query, **kwargs):
-        """
-        Format a query with the configured keyspace and migration table
+        """Format a query with the configured keyspace and migration table.
 
-        `keyspace` and `table` are interpolated as named arguments
+        `keyspace` and `table` are interpolated as named arguments.
         """
         return query.format(
             keyspace=self.config.keyspace, table=self.config.migrations_table,
             **kwargs)
 
     def _execute(self, query, *args, **kwargs):
-        """Execute a query with the current session"""
+        """Execute a query with the current session."""
 
-        self.logger.debug('Executing query: {}'.format(query))
+        self.logger.debug(f'Executing query: {query}')
         return self.session.execute(query, *args, **kwargs)
 
     def _keyspace_exists(self):
@@ -241,12 +241,12 @@ class Migrator(object):
         return self.config.keyspace in self.cluster.metadata.keyspaces
 
     def _ensure_keyspace(self):
-        """Create the keyspace if it does not exist"""
+        """Create the keyspace if it does not exist."""
 
         if self._keyspace_exists():
             return
 
-        self.logger.info("Creating keyspace '{}'".format(self.config.keyspace))
+        self.logger.info(f'Creating keyspace {self.config.keyspace!r}')
 
         profile = self.current_profile
         self._execute(self._q(
@@ -264,21 +264,21 @@ class Migrator(object):
         # Fail if the keyspace is missing. If it should be created
         # automatically _ensure_keyspace() must be called first.
         if not ks_metadata:
-            raise ValueError("Keyspace '{}' does not exist, "
-                             "stopping".format(self.config.keyspace))
+            raise ValueError(f'Keyspace {self.config.keyspace!r} does not exist, '
+                             'stopping')
 
         return self.config.migrations_table in ks_metadata.tables
 
     def _ensure_table(self):
-        """Create the migration table if it does not exist"""
+        """Create the migration table if it does not exist."""
 
         if self._table_exists():
             return
 
         self.logger.info(
-            "Creating table '{table}' in keyspace '{keyspace}'".format(
-                keyspace=self.config.keyspace,
-                table=self.config.migrations_table))
+            f'Creating table {self.config.migrations_table!r} '
+            f'in keyspace {self.config.keyspace!r}'
+        )
 
         self._execute(self._q(CREATE_MIGRATIONS_TABLE))
         self.cluster.refresh_table_metadata(self.config.keyspace,
@@ -286,7 +286,7 @@ class Migrator(object):
 
     def _verify_migrations(self, migrations, ignore_failed=False,
                            ignore_concurrent=False):
-        """Verify if the version history persisted in C* matches the migrations
+        """Verify if the version history persisted in Cassandra matches the migrations.
 
         Migrations with corresponding DB versions must have the same content
         and name.
@@ -353,16 +353,16 @@ class Migrator(object):
             self.logger.info('Database is already up-to-date')
         else:
             self.logger.info(
-                'Pending migrations found. Current version: {}, '
-                'Latest version: {}'.format(last_version, len(migrations)))
+                f'Pending migrations found. Current version: {last_version}, '
+                f'Latest version: {len(migrations)}'
+            )
 
         pending_migrations = enumerate(
             pending_migrations, (last_version or 0) + 1)
         return last_version, cur_versions, list(pending_migrations)
 
     def _create_version(self, version, migration):
-        """
-        Write an in-progress version entry to C*
+        """Write an in-progress version entry to Cassandra.
 
         The migration is inserted with the given `version` number if and only
         if it does not exist already (using a CompareAndSet operation).
@@ -373,8 +373,7 @@ class Migrator(object):
 
         """
 
-        self.logger.info('Writing in-progress migration version {}: {}'.format(
-            version, migration))
+        self.logger.info(f'Writing in-progress migration version {version}: {migration}')
 
         version_id = uuid.uuid4()
         result = self._execute(
@@ -388,21 +387,21 @@ class Migrator(object):
         return version_id
 
     def _apply_cql_migration(self, version, migration):
-        """
-        Persist and apply a cql migration
+        """Persist and apply a CQL migration.
 
         First create an in-progress version entry, apply the script, then
         finalize the entry as succeeded, failed or skipped.
         """
 
-        self.logger.info('Applying cql migration')
+        self.logger.info('Applying CQL migration')
 
         statements = CQLSplitter.split(migration.content)
 
         try:
             if statements:
-                self.logger.info('Executing migration with '
-                                 '{} CQL statements'.format(len(statements)))
+                self.logger.info(
+                    f'Executing migration with {len(statements)} CQL statements'
+                )
 
             for statement in statements:
                 self.session.execute(statement)
@@ -411,8 +410,7 @@ class Migrator(object):
             raise FailedMigration(version, migration.name)
 
     def _apply_python_migration(self, version, migration):
-        """
-        Persist and apply a python migration
+        """Persist and apply a python migration.
 
         First create an in-progress version entry, apply the script, then
         finalize the entry as succeeded, failed or skipped.
@@ -428,14 +426,13 @@ class Migrator(object):
             raise FailedMigration(version, migration.name)
 
     def _apply_migration(self, version, migration, skip=False):
-        """
-        Persist and apply a migration
+        """Persist and apply a migration.
 
         When `skip` is True, do everything but actually run the script, for
         example, when baselining instead of migrating.
         """
 
-        self.logger.info('Advancing to version {}'.format(version))
+        self.logger.info(f'Advancing to version {version}')
 
         version_uuid = self._create_version(version, migration)
         new_state = Migration.State.FAILED
@@ -459,8 +456,7 @@ class Migrator(object):
             new_state = (Migration.State.SUCCEEDED if not skip
                          else Migration.State.SKIPPED)
         finally:
-            self.logger.info('Finalizing migration version with '
-                             'state {}'.format(new_state))
+            self.logger.info(f'Finalizing migration version with state {new_state!r}')
             result = self._execute(
                 self._q(FINALIZE_DB_VERSION),
                 (new_state, version_uuid, Migration.State.IN_PROGRESS))
@@ -477,8 +473,9 @@ class Migrator(object):
             return
 
         self.logger.warn(
-            'Cleaning up previous failed migration '
-            '(version {}): {}'.format(last_version.version, last_version.name))
+            f'Cleaning up previous failed migration '
+            f'(version {last_version.version}): {last_version.name}'
+        )
 
         result = self._execute(
             self._q(DELETE_DB_VERSION),
@@ -490,17 +487,15 @@ class Migrator(object):
 
     def _advance(self, migrations, target, cur_versions, skip=False,
                  force=False):
-        """Apply all necessary migrations to reach a target version"""
+        """Apply all necessary migrations to reach a target version."""
         if force:
             self._cleanup_previous_versions(cur_versions)
 
         target_version = self._get_target_version(target)
 
         if migrations:
-            # Set default keyspace so migrations don't need to refer to it
-            # manually
-            # Fixes https://github.com/Cobliteam/cassandra-migrate/issues/5
-            self.session.execute('USE {};'.format(self.config.keyspace))
+            # Set default keyspace so migrations don't need to refer to it manually
+            self.session.execute(f'USE {self.config.keyspace};')
 
         for version, migration in migrations:
             if version > target_version:
@@ -511,7 +506,7 @@ class Migrator(object):
         self.cluster.refresh_schema_metadata()
 
     def baseline(self, opts):
-        """Baseline a database, by advancing migration state without changes"""
+        """Baseline a database, by advancing migration state without changes."""
 
         self._check_cluster()
         self._ensure_table()
@@ -525,9 +520,7 @@ class Migrator(object):
 
     @confirmation_required
     def migrate(self, opts):
-        """
-        Migrate a database to a given version, applying any needed migrations
-        """
+        """Migrate a database to a given version, applying any needed migration."""
 
         self._check_cluster()
 
@@ -543,11 +536,10 @@ class Migrator(object):
 
     @confirmation_required
     def reset(self, opts):
-        """Reset a database, by dropping the keyspace then migrating"""
+        """Reset a database, by dropping the keyspace then migrating."""
         self._check_cluster()
 
-        self.logger.info("Dropping existing keyspace '{}'".format(
-            self.config.keyspace))
+        self.logger.info(f'Dropping existing keyspace {self.config.keyspace!r}')
 
         self._execute(self._q(DROP_KEYSPACE))
         self.cluster.refresh_schema_metadata()
@@ -563,15 +555,14 @@ class Migrator(object):
         self._check_cluster()
 
         if not self._keyspace_exists():
-            print("Keyspace '{}' does not exist".format(self.config.keyspace))
+            print(f'Keyspace {self.config.keyspace!r} does not exist')
             return
 
         if not self._table_exists():
             print(
-                "Migration table '{table}' does not exist in "
-                "keyspace '{keyspace}'".format(
-                    keyspace=self.config.keyspace,
-                    table=self.config.migrations_table))
+                f'Migration table {self.config.migrations_table!r} does not exist in '
+                f'keyspace {self.config.keyspace!r}'
+            )
             return
 
         last_version, cur_versions, pending_migrations = \

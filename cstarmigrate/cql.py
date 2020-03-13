@@ -43,7 +43,7 @@ class CQLSplitter:
 
     @classmethod
     def split(cls, query):
-        """Split up content, and return individual statements uncommented"""
+        """Split up content, and return individual statements uncommented."""
 
         tokens, match = cls.scanner().scan(query)
         cur_statement = ''

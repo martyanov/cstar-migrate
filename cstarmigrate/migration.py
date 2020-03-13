@@ -10,7 +10,7 @@ import arrow
 
 class Migration(collections.namedtuple('Migration',
                                        'path name is_python content checksum')):
-    """Data class representing the specification of a migration
+    """Data class representing the specification of a migration.
 
     Migrations can take the form of CQL files or Python scripts, and usually
     have names starting with a version string that can be ordered.
@@ -20,7 +20,7 @@ class Migration(collections.namedtuple('Migration',
     __slots__ = ()
 
     class State:
-        """Possible states of a migration, as saved in C*"""
+        """Possible states of a migration, as saved in Cassandra."""
 
         SUCCEEDED = 'SUCCEEDED'
         FAILED = 'FAILED'
@@ -29,14 +29,14 @@ class Migration(collections.namedtuple('Migration',
 
     @staticmethod
     def _natural_sort_key(s):
-        """Generate a sort key for natural sorting"""
+        """Generate a sort key for natural sorting."""
         k = tuple(int(text) if text.isdigit() else text
                   for text in re.split(r'([0-9]+)', s))
         return k
 
     @classmethod
     def load(cls, path):
-        """Load a migration from a given file"""
+        """Load a migration from a given file."""
         with open(path, 'r', encoding='utf-8') as fp:
             content = fp.read()
 
@@ -51,13 +51,13 @@ class Migration(collections.namedtuple('Migration',
 
     @classmethod
     def sort_paths(cls, paths):
-        """Sort paths naturally by basename, to order by migration version"""
+        """Sort paths naturally by basename, to order by migration version."""
         return sorted(paths,
                       key=lambda p: cls._natural_sort_key(os.path.basename(p)))
 
     @classmethod
     def glob_all(cls, base_path, *patterns):
-        """Load all paths matching a glob as migrations in sorted order"""
+        """Load all paths matching a glob as migrations in sorted order."""
 
         paths = []
         for pattern in patterns:
@@ -99,9 +99,9 @@ class Migration(collections.namedtuple('Migration',
 
     @classmethod
     def _create_file(cls, path, content):
-        """Creates physical file"""
+        """Creates physical file."""
         with io.open(path, 'w', encoding='utf-8') as f:
             f.write(content + '\n')
 
     def __str__(self):
-        return 'Migration("{}")'.format(self.name)
+        return f'Migration({self.name!r})'
