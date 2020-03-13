@@ -14,14 +14,9 @@ import cassandra.auth
 import cassandra.cluster
 import tabulate
 
+from . import cql
+from . import exceptions
 from . import migration as cstar_migration
-from . import (
-    ConcurrentMigration,
-    FailedMigration,
-    InconsistentState,
-    UnknownMigration,
-)
-from .cql import CQLSplitter
 
 
 CREATE_MIGRATIONS_TABLE = """
@@ -319,14 +314,14 @@ class Migrator(object):
             # no corresponding file. That might mean we're running the wrong
             # migration or have an out-of-date state, so we must fail
             if not migration:
-                raise UnknownMigration(version.version, version.name)
+                raise exceptions.UnknownMigration(version.version, version.name)
 
             # A migration was previously run and failed
             if version.state == cstar_migration.MigrationState.FAILED:
                 if ignore_failed:
                     break
 
-                raise FailedMigration(version.version, version.name)
+                raise exceptions.FailedMigration(version.version, version.name)
 
             last_version = version.version
 
@@ -334,7 +329,7 @@ class Migrator(object):
             if version.state == cstar_migration.MigrationState.IN_PROGRESS:
                 if ignore_concurrent:
                     break
-                raise ConcurrentMigration(version.version, version.name)
+                raise exceptions.ConcurrentMigration(version.version, version.name)
 
             # A stored version's migrations differs from the one in the FS
             if (
@@ -342,7 +337,7 @@ class Migrator(object):
                     version.name != migration.name or
                     bytearray(version.checksum) != bytearray(migration.checksum)
             ):
-                raise InconsistentState(migration, version)
+                raise exceptions.InconsistentState(migration, version)
 
         if not last_version:
             pending_migrations = list(migrations)
@@ -389,7 +384,7 @@ class Migrator(object):
         )
 
         if not result or not result[0].applied:
-            raise ConcurrentMigration(version, migration.name)
+            raise exceptions.ConcurrentMigration(version, migration.name)
 
         return version_id
 
@@ -402,7 +397,7 @@ class Migrator(object):
 
         self.logger.info('Applying CQL migration')
 
-        statements = CQLSplitter.split(migration.content)
+        statements = cql.CQLSplitter.split(migration.content)
 
         try:
             if statements:
@@ -414,7 +409,7 @@ class Migrator(object):
                 self.session.execute(statement)
         except Exception:
             self.logger.exception('Failed to execute migration')
-            raise FailedMigration(version, migration.name)
+            raise exceptions.FailedMigration(version, migration.name)
 
     def _apply_python_migration(self, version, migration):
         """Persist and apply a python migration.
@@ -430,7 +425,7 @@ class Migrator(object):
             migration_script.execute(self._session)
         except Exception:
             self.logger.exception('Failed to execute script')
-            raise FailedMigration(version, migration.name)
+            raise exceptions.FailedMigration(version, migration.name)
 
     def _apply_migration(self, version, migration, skip=False):
         """Persist and apply a migration.
@@ -458,7 +453,7 @@ class Migrator(object):
                     self._apply_cql_migration(version, migration)
         except Exception:
             self.logger.exception('Failed to execute migration')
-            raise FailedMigration(version, migration.name)
+            raise exceptions.FailedMigration(version, migration.name)
         else:
             new_state = (cstar_migration.MigrationState.SUCCEEDED if not skip
                          else cstar_migration.MigrationState.SKIPPED)
@@ -469,7 +464,7 @@ class Migrator(object):
                 (new_state, version_uuid, cstar_migration.MigrationState.IN_PROGRESS))
 
         if not result or not result[0].applied:
-            raise ConcurrentMigration(version, migration.name)
+            raise exceptions.ConcurrentMigration(version, migration.name)
 
     def _cleanup_previous_versions(self, cur_versions):
         if not cur_versions:
@@ -490,8 +485,8 @@ class Migrator(object):
         )
 
         if not result[0].applied:
-            raise ConcurrentMigration(last_version.version,
-                                      last_version.name)
+            raise exceptions.ConcurrentMigration(last_version.version,
+                                                 last_version.name)
 
     def _advance(self, migrations, target, cur_versions, skip=False, force=False):
         """Apply all necessary migrations to reach a target version."""

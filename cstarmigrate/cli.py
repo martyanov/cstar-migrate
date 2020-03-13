@@ -5,11 +5,9 @@ import subprocess
 import sys
 
 from . import config as cstar_config
+from . import exceptions
 from . import migration as cstar_migration
 from . import migrator as cstar_migrator
-from . import (
-    MigrationError,
-)
 
 
 def open_file(filename):
@@ -154,6 +152,6 @@ def main():
 
             try:
                 cmd_method(opts)
-            except MigrationError as e:
+            except exceptions.MigrationError as e:
                 print(f'Error: {e!r}', file=sys.stderr)
                 sys.exit(1)
