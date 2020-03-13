@@ -5,13 +5,6 @@ import yaml
 from .migration import Migration
 
 
-DEFAULT_NEW_MIGRATION_TEXT = """
-/* Cassandra migration for keyspace {keyspace}.
-   Version {next_version} - {date}
-
-   {full_desc} */
-""".lstrip()
-
 DEFAULT_NEW_CQL_MIGRATION_TEXT = """
 /* Cassandra migration for keyspace {keyspace}.
    Version {next_version} - {date}
@@ -41,8 +34,7 @@ def _assert_type(data, key, tpe, default=None):
 
 
 class MigrationConfig:
-    """
-    Data class containing all configuration for migration operations.
+    """Data class containing all configuration for migration operations.
 
     Configuration includes:
     - Keyspace to be managed
@@ -91,10 +83,6 @@ class MigrationConfig:
         self.new_migration_name = _assert_type(
             data, 'new_migration_name', str,
             default='v{next_version}_{desc}')
-
-        self.new_migration_text = _assert_type(
-            data, 'new_migration_text', str,
-            default=DEFAULT_NEW_MIGRATION_TEXT)
 
         self.new_cql_migration_text = _assert_type(
             data, 'new_cql_migration_text', str,

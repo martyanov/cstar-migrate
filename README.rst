@@ -30,7 +30,7 @@ Databases are configured through YAML files. For example:
 
 .. code:: yaml
 
-    keyspace: herbie
+    keyspace: cstar
     profiles:
       prod:
         replication:
@@ -44,8 +44,6 @@ Where the ``migrations`` folder (relative to the config file). contains
 The default convention is to name them in the form: ``v001_my_migration.{cql | py}``.
 A custom naming scheme can be specified with the ``new_migration_name`` option.
 
-Note: new_migration_text is deprecated. The specific file type option should be used instead.
-
 For example
 
 .. code:: yaml
@@ -55,13 +53,6 @@ For example
 
     # Default migration names
     new_migration_name: "v{next_version:03d}_{desc}"
-
-    # Custom initial migration content
-    new_migration_text: |
-      /* Cassandra migration for keyspace {keyspace}.
-         Version {next_version} - {date}
-
-         {full_desc} */
 
     # Custom initial migration content for cql scripts
     new_cql_migration_text: |
@@ -100,10 +91,6 @@ following parameters:
 
 The format string should *not* contain the .cql or .py extensions, as it they
 added automatically.
-
-``new_migraton_text`` is handled with the same rules outline above, but defines
-the initial content of the migration file, if the type-specific options below
-ared not set.
 
 ``new_cql_migraton_text`` defines the initial content of CQL migration files.
 
