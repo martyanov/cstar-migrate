@@ -322,7 +322,7 @@ class Migrator(object):
                 raise UnknownMigration(version.version, version.name)
 
             # A migration was previously run and failed
-            if version.state == cstar_migration.Migration.State.FAILED:
+            if version.state == cstar_migration.MigrationState.FAILED:
                 if ignore_failed:
                     break
 
@@ -331,7 +331,7 @@ class Migrator(object):
             last_version = version.version
 
             # A migration is in progress
-            if version.state == cstar_migration.Migration.State.IN_PROGRESS:
+            if version.state == cstar_migration.MigrationState.IN_PROGRESS:
                 if ignore_concurrent:
                     break
                 raise ConcurrentMigration(version.version, version.name)
@@ -384,7 +384,7 @@ class Migrator(object):
                 migration.name,
                 migration.content,
                 bytearray(migration.checksum),
-                cstar_migration.Migration.State.IN_PROGRESS,
+                cstar_migration.MigrationState.IN_PROGRESS,
             ),
         )
 
@@ -442,7 +442,7 @@ class Migrator(object):
         self.logger.info(f'Advancing to version {version}')
 
         version_uuid = self._create_version(version, migration)
-        new_state = cstar_migration.Migration.State.FAILED
+        new_state = cstar_migration.MigrationState.FAILED
         sys.path.append(self.config.migrations_path)
 
         result = None
@@ -460,13 +460,13 @@ class Migrator(object):
             self.logger.exception('Failed to execute migration')
             raise FailedMigration(version, migration.name)
         else:
-            new_state = (cstar_migration.Migration.State.SUCCEEDED if not skip
-                         else cstar_migration.Migration.State.SKIPPED)
+            new_state = (cstar_migration.MigrationState.SUCCEEDED if not skip
+                         else cstar_migration.MigrationState.SKIPPED)
         finally:
             self.logger.info(f'Finalizing migration version with state {new_state!r}')
             result = self._execute(
                 self._q(FINALIZE_DB_VERSION),
-                (new_state, version_uuid, cstar_migration.Migration.State.IN_PROGRESS))
+                (new_state, version_uuid, cstar_migration.MigrationState.IN_PROGRESS))
 
         if not result or not result[0].applied:
             raise ConcurrentMigration(version, migration.name)
@@ -476,7 +476,7 @@ class Migrator(object):
             return
 
         last_version = cur_versions[-1]
-        if last_version.state != cstar_migration.Migration.State.FAILED:
+        if last_version.state != cstar_migration.MigrationState.FAILED:
             return
 
         self.logger.warn(
@@ -486,7 +486,7 @@ class Migrator(object):
 
         result = self._execute(
             self._q(DELETE_DB_VERSION),
-            (last_version.id, cstar_migration.Migration.State.FAILED),
+            (last_version.id, cstar_migration.MigrationState.FAILED),
         )
 
         if not result[0].applied:

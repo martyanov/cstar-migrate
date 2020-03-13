@@ -8,6 +8,15 @@ import re
 import arrow
 
 
+class MigrationState:
+    """Possible states of a migration, as saved in Cassandra."""
+
+    SUCCEEDED = 'SUCCEEDED'
+    FAILED = 'FAILED'
+    SKIPPED = 'SKIPPED'
+    IN_PROGRESS = 'IN_PROGRESS'
+
+
 class Migration(collections.namedtuple('Migration',
                                        'path name is_python content checksum')):
     """Data class representing the specification of a migration.
@@ -18,14 +27,6 @@ class Migration(collections.namedtuple('Migration',
     migrations"""
 
     __slots__ = ()
-
-    class State:
-        """Possible states of a migration, as saved in Cassandra."""
-
-        SUCCEEDED = 'SUCCEEDED'
-        FAILED = 'FAILED'
-        SKIPPED = 'SKIPPED'
-        IN_PROGRESS = 'IN_PROGRESS'
 
     @staticmethod
     def _natural_sort_key(s):
