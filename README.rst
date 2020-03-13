@@ -41,18 +41,18 @@ Databases are configured through YAML files. For example:
 Where the ``migrations`` folder (relative to the config file). contains
 ``.cql`` or ``.py`` files. The files are loaded in lexical order.
 
-The default convention is to name them in the form: ``v001_my_migration.{cql | py}``.
+The default convention is to name them in the form: ``001_my_migration.{cql | py}``.
 A custom naming scheme can be specified with the ``new_migration_name`` option.
 
 For example
 
 .. code:: yaml
 
-    # Date-based migration names
-    new_migration_name: "v{date:YYYYMMDDHHmmss}_{desc}"
-
     # Default migration names
-    new_migration_name: "v{next_version:03d}_{desc}"
+    new_migration_name: "{next_version:03d}_{desc}"
+
+    # Date-based migration names
+    new_migration_name: "{date:YYYYMMDDHHmmss}_{desc}"
 
     # Custom initial migration content for cql scripts
     new_cql_migration_text: |

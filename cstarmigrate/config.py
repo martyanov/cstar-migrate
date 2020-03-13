@@ -82,7 +82,7 @@ class MigrationConfig:
 
         self.new_migration_name = _assert_type(
             data, 'new_migration_name', str,
-            default='v{next_version}_{desc}')
+            default='{next_version:03d}_{desc}')
 
         self.new_cql_migration_text = _assert_type(
             data, 'new_cql_migration_text', str,
