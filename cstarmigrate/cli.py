@@ -25,7 +25,7 @@ def open_file(filename):
         subprocess.call(opener)
 
 
-def main():
+def main(argv=None):
     logging.basicConfig(level=logging.INFO)
     logging.getLogger('cassandra.policies').setLevel(logging.ERROR)
 
@@ -116,7 +116,7 @@ def main():
         sub.add_argument('db_version', metavar='VERSION', nargs='?',
                          help='Database version to baseline/reset/migrate to')
 
-    opts = parser.parse_args()
+    opts = parser.parse_args(argv)
 
     # Enable user confirmation if we're running the script from a TTY
     opts.cli_mode = sys.stdin.isatty()
