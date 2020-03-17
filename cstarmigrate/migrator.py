@@ -519,6 +519,7 @@ class Migrator(object):
 
         self.cluster.refresh_schema_metadata()
 
+    @confirmation_required
     def baseline(self, opts):
         """Baseline a database, by advancing migration state without changes."""
 
