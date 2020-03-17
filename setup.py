@@ -1,7 +1,7 @@
 import setuptools
 
 
-VERSION = '0.4.0rc1'
+VERSION = '0.4.0rc2'
 
 
 setuptools.setup(
