@@ -187,7 +187,7 @@ Examples:
     cstar-migrate -c mydb.yml migrate 2
 
     # Migrate to a version by name
-    cstar-migrate migrate v005_my_changes.cql
+    cstar-migrate migrate 002_my_changes.cql
 
     # Force migration after a failure
     cstar-migrate migrate 2 --force
