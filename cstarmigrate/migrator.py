@@ -12,6 +12,7 @@ import arrow
 import cassandra
 import cassandra.auth
 import cassandra.cluster
+import cassandra.policies
 import tabulate
 
 from . import cql
@@ -135,6 +136,16 @@ class Migrator(object):
         else:
             ssl_options = None
 
+        execution_profile = cassandra.cluster.ExecutionProfile(
+            consistency_level=cassandra.ConsistencyLevel.ALL,
+            load_balancing_policy=cassandra.policies.RoundRobinPolicy(),
+            serial_consistency_level=cassandra.ConsistencyLevel.SERIAL,
+            request_timeout=120,
+        )
+        execution_profiles = {
+            cassandra.cluster.EXEC_PROFILE_DEFAULT: execution_profile,
+        }
+
         self.cluster = cassandra.cluster.Cluster(
             contact_points=hosts,
             port=port,
@@ -144,6 +155,7 @@ class Migrator(object):
             control_connection_timeout=10,
             connect_timeout=30,
             ssl_options=ssl_options,
+            execution_profiles=execution_profiles,
         )
 
         self._session = None
@@ -175,10 +187,7 @@ class Migrator(object):
 
     def _init_session(self):
         if not self._session:
-            s = self._session = self.cluster.connect()
-            s.default_consistency_level = cassandra.ConsistencyLevel.ALL
-            s.default_serial_consistency_level = cassandra.ConsistencyLevel.SERIAL
-            s.default_timeout = 120
+            self._session = self.cluster.connect()
 
     @property
     def session(self):
