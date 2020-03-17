@@ -57,7 +57,7 @@ class MigrationConfig:
         Initialize a migration configuration from a data dict and base path.
 
         The data will usually be loaded from a YAML file, and must contain
-        at least `keyspace`, `migrations_path` and `migrations_table`
+        at least `keyspace` and `migrations_path`.
         """
 
         self.keyspace = _assert_type(data, 'keyspace', str)
