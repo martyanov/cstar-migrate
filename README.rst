@@ -133,12 +133,16 @@ Common parameters:
 
   -H HOSTS, --hosts HOSTS
                         Comma-separated list of contact points
-  -p PORT, --port PORT  Connection port
-  -u USER, --user USER  Connection username
+  -p PORT, --port PORT
+                        Connection port
+  -u USER, --user USER
+                        Connection username
   -P PASSWORD, --password PASSWORD
                         Connection password
   -c CONFIG_FILE, --config-file CONFIG_FILE
                         Path to configuration file
+  -l PROTOCOL_VERSION, --protocol-version PROTOCOL_VERSION
+                        Connection protocol version
   -m PROFILE, --profile PROFILE
                         Name of keyspace profile to use
   -s SSL_CERT, --ssl-cert SSL_CERT
@@ -163,7 +167,8 @@ Common parameters:
                         migrations are run against. This option must be used
                         in conjuction with the -k option. This option is
                         ignored unless the -s option is provided.
-  -y, --assume-yes      Automatically answer "yes" for all questions
+  -y, --assume-yes
+                        Automatically answer "yes" for all questions
 
 migrate
 ~~~~~~~

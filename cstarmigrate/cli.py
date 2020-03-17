@@ -38,6 +38,8 @@ def main(argv=None):
                         help='Connection username')
     parser.add_argument('-P', '--password',
                         help='Connection password')
+    parser.add_argument('-l', '--protocol-version', type=int, default=4,
+                        help='Connection protocol version')
     parser.add_argument('-c', '--config-file', default='cstar-migrate.yml',
                         help='Path to configuration file')
     parser.add_argument('-m', '--profile', default='dev',
@@ -141,6 +143,7 @@ def main(argv=None):
             port=opts.port,
             user=opts.user,
             password=opts.password,
+            protocol_version=opts.protocol_version,
             host_cert_path=opts.ssl_cert,
             client_key_path=opts.ssl_client_private_key,
             client_cert_path=opts.ssl_client_cert,

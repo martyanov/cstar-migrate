@@ -112,8 +112,9 @@ class Migrator(object):
     logger = logging.getLogger('Migrator')
 
     def __init__(self, config, profile='dev', hosts=['127.0.0.1'], port=9042,
-                 user=None, password=None, host_cert_path=None,
-                 client_key_path=None, client_cert_path=None):
+                 user=None, password=None, protocol_version=4,
+                 host_cert_path=None, client_key_path=None,
+                 client_cert_path=None):
         self.config = config
 
         try:
@@ -138,10 +139,12 @@ class Migrator(object):
             contact_points=hosts,
             port=port,
             auth_provider=auth_provider,
+            protocol_version=protocol_version,
             max_schema_agreement_wait=300,
             control_connection_timeout=10,
             connect_timeout=30,
-            ssl_options=ssl_options)
+            ssl_options=ssl_options,
+        )
 
         self._session = None
 
