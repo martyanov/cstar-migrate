@@ -71,40 +71,45 @@ def main(argv=None):
     parser.add_argument('-y', '--assume-yes', action='store_true',
                         help='Automatically answer "yes" for all questions')
 
-    cmds = parser.add_subparsers(help='sub-command help')
+    commands = parser.add_subparsers(help='sub-command help')
 
-    bline = cmds.add_parser(
-        'baseline',
-        help='Baseline database state, advancing migration information without '
-             'making changes')
-    bline.set_defaults(action='baseline')
-
-    reset = cmds.add_parser(
-        'reset',
-        help='Reset database state, by dropping the keyspace (if it exists) '
-             'and recreating it from scratch')
-    reset.set_defaults(action='reset')
-
-    mgrat = cmds.add_parser(
+    migrate = commands.add_parser(
         'migrate',
         help='Migrate database up to the most recent (or specified) version '
              'by applying any new migration scripts in sequence')
-    mgrat.add_argument('-f', '--force', action='store_true',
-                       help='Force migration even if last attempt failed')
-    mgrat.set_defaults(action='migrate')
+    migrate.add_argument('-f', '--force', action='store_true',
+                         help='Force migration even if last attempt failed')
+    migrate.set_defaults(action='migrate')
 
-    stats = cmds.add_parser(
+    reset = commands.add_parser(
+        'reset',
+        help='Reset the database, by dropping an existing keyspace, '
+             'then running a migration')
+    reset.set_defaults(action='reset')
+
+    clear = commands.add_parser(
+        'clear',
+        help='Clear the database, by dropping an existing keyspace')
+    clear.set_defaults(action='clear')
+
+    baseline = commands.add_parser(
+        'baseline',
+        help='Baseline database state, advancing migration information without '
+             'making changes')
+    baseline.set_defaults(action='baseline')
+
+    stats = commands.add_parser(
         'status',
         help='Print current state of keyspace')
     stats.set_defaults(action='status')
 
-    genrt = cmds.add_parser(
+    generate = commands.add_parser(
         'generate',
         help='Generate a new migration file')
-    genrt.add_argument(
+    generate.add_argument(
         'description',
         help='Brief description of the new migration')
-    genrt.add_argument(
+    generate.add_argument(
         '--python',
         dest='migration_type',
         action='store_const',
@@ -112,11 +117,11 @@ def main(argv=None):
         default='cql',
         help='Generates a Python script instead of CQL.')
 
-    genrt.set_defaults(action='generate')
+    generate.set_defaults(action='generate')
 
-    for sub in (bline, reset, mgrat):
-        sub.add_argument('db_version', metavar='VERSION', nargs='?',
-                         help='Database version to baseline/reset/migrate to')
+    for subcommand in (migrate, reset, baseline):
+        subcommand.add_argument('db_version', metavar='VERSION', nargs='?',
+                                help='Database version to baseline/reset/migrate to')
 
     opts = parser.parse_args(argv)
 

@@ -200,8 +200,7 @@ Examples:
 reset
 ~~~~~
 
-Reset the database by dropping an existing keyspace, then running a
-migration.
+Reset the database by dropping an existing keyspace, then running a migration.
 
 Examples:
 
@@ -212,6 +211,18 @@ Examples:
 
     # Reset the database to a specifis version
     cstar-migrate reset 3
+
+clear
+~~~~~
+
+Clear the database by dropping an existing keyspace.
+
+Example:
+
+.. code:: bash
+
+    # Clear the database
+    cstar-migrate clear
 
 baseline
 ~~~~~~~~
@@ -256,7 +267,7 @@ To generate a Python script, specify the ``--python`` option.
 
 See the configuration section for details on migration naming.
 
-Example:
+Examples:
 
 .. code:: bash
 
