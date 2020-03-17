@@ -520,20 +520,6 @@ class Migrator(object):
         self.cluster.refresh_schema_metadata()
 
     @confirmation_required
-    def baseline(self, opts):
-        """Baseline a database, by advancing migration state without changes."""
-
-        self._check_cluster()
-        self._ensure_table()
-
-        last_version, cur_versions, pending_migrations = \
-            self._verify_migrations(self.config.migrations,
-                                    ignore_failed=False)
-
-        self._advance(pending_migrations, opts.db_version, cur_versions,
-                      skip=True)
-
-    @confirmation_required
     def migrate(self, opts):
         """Migrate a database to a given version, applying any needed migration."""
 
@@ -551,7 +537,8 @@ class Migrator(object):
 
     @confirmation_required
     def reset(self, opts):
-        """Reset a database, by dropping the keyspace then migrating."""
+        """Reset the database, by dropping an existing keyspace then running a migration.
+        """
         self._check_cluster()
 
         self.logger.info(f'Dropping existing keyspace {self.config.keyspace!r}')
@@ -561,6 +548,30 @@ class Migrator(object):
 
         opts.force = False
         self.migrate(opts)
+
+    @confirmation_required
+    def clear(self, opts):
+        """Clear the database, by dropping an existing keyspace."""
+        self._check_cluster()
+
+        self.logger.info(f'Dropping existing keyspace {self.config.keyspace!r}')
+
+        self._execute(self._q(DROP_KEYSPACE))
+        self.cluster.refresh_schema_metadata()
+
+    @confirmation_required
+    def baseline(self, opts):
+        """Baseline a database, by advancing migration state without changes."""
+
+        self._check_cluster()
+        self._ensure_table()
+
+        last_version, cur_versions, pending_migrations = \
+            self._verify_migrations(self.config.migrations,
+                                    ignore_failed=False)
+
+        self._advance(pending_migrations, opts.db_version, cur_versions,
+                      skip=True)
 
     @staticmethod
     def _bytes_to_hex(bs):
