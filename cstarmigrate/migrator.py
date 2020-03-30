@@ -395,7 +395,7 @@ class Migrator(object):
             ),
         )
 
-        if not result or not result[0].applied:
+        if not result or not result.one().applied:
             raise exceptions.ConcurrentMigration(version, migration.name)
 
         return version_id
@@ -475,7 +475,7 @@ class Migrator(object):
                 self._q(FINALIZE_DB_VERSION),
                 (new_state, version_uuid, cstar_migration.MigrationState.IN_PROGRESS))
 
-        if not result or not result[0].applied:
+        if not result or not result.one().applied:
             raise exceptions.ConcurrentMigration(version, migration.name)
 
     def _cleanup_previous_versions(self, cur_versions):
@@ -496,7 +496,7 @@ class Migrator(object):
             (last_version.id, cstar_migration.MigrationState.FAILED),
         )
 
-        if not result[0].applied:
+        if not result.one().applied:
             raise exceptions.ConcurrentMigration(last_version.version,
                                                  last_version.name)
 
