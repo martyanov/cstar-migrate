@@ -34,20 +34,20 @@ setuptools.setup(
     },
     python_requires='>=3.7,<4.0',
     install_requires=[
-        'arrow<0.16',
+        'arrow<0.17',
         'cassandra-driver<4.0',
-        'pyyaml<5.0',
+        'pyyaml<6.0',
         'tabulate<0.9',
     ],
     extras_require={
         'dev': [
-            'flake8==3.7.9',
-            'twine==3.1.1',
+            'flake8==3.8.3',
+            'twine==3.2.0',
         ],
         'test': [
-            'pytest-cov==2.8.1',
-            'pytest==5.3.5',
-            'tox==3.14.5',
+            'pytest-cov==2.10.1',
+            'pytest==6.1.0',
+            'tox==3.20.0',
         ],
     },
     entry_points={
