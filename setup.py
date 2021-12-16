@@ -26,17 +26,19 @@ setuptools.setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Topic :: Database',
     ],
     project_urls={
         'Bug Reports': 'https://github.com/martyanov/cstar-migrate/issues',
         'Repository': 'https://github.com/martyanov/cstar-migrate',
     },
-    python_requires='>=3.7,<4.0',
+    python_requires='>=3.7,<4',
     install_requires=[
-        'arrow>=0.15,<2.0',
-        'cassandra-driver>=3.0,<4.0',
-        'pyyaml>=5.1,<7.0',
+        'arrow>=0.15,<2',
+        'cassandra-driver>=3.0,<4',
+        'pyyaml>=5.1,<7',
         'tabulate>=0.8,<0.9',
     ],
     extras_require={
