@@ -2,6 +2,9 @@ name: CI
 
 on: ['push']
 
+env:
+  CASS_DRIVER_NO_CYTHON: '1'
+
 jobs:
   lint:
     name: Run lint
