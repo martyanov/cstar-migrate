@@ -41,12 +41,12 @@ setuptools.setup(
     ],
     extras_require={
         'dev': [
-            'flake8==3.8.3',
-            'twine==3.2.0',
+            'flake8==4.0.1',
+            'twine==3.7.1',
         ],
         'test': [
-            'pytest-cov==2.10.1',
-            'pytest==6.1.0',
+            'pytest-cov==3.0.0',
+            'pytest==6.2.5',
         ],
     },
     entry_points={
