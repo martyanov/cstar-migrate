@@ -36,7 +36,7 @@ setuptools.setup(
     install_requires=[
         'arrow>=0.15,<0.17',
         'cassandra-driver>=3.0,<4.0',
-        'pyyaml>=5.1,<6.0',
+        'pyyaml>=5.1,<7.0',
         'tabulate>=0.8,<0.9',
     ],
     extras_require={
