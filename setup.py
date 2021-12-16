@@ -47,7 +47,6 @@ setuptools.setup(
         'test': [
             'pytest-cov==2.10.1',
             'pytest==6.1.0',
-            'tox==3.20.0',
         ],
     },
     entry_points={
