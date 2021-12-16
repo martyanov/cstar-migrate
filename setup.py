@@ -1,18 +1,19 @@
 import setuptools
 
 
-VERSION = '0.4.0rc5'
+def _get_long_description():
+    with open('README.rst') as readme_file:
+        return readme_file.read()
 
 
 setuptools.setup(
     name='cstar-migrate',
+    use_scm_version=True,
     packages=setuptools.find_packages(),
-    version=VERSION,
     description='Cassandra schema migration tool',
-    long_description=open('README.rst').read(),
+    long_description=_get_long_description(),
     long_description_content_type='text/x-rst',
     url='https://github.com/martyanov/cstar-migrate',
-    download_url=f'https://github.com/martyanov/cstar-migrate/archive/{VERSION}.tar.gz',
     author='Andrey Martyanov',
     author_email='andrey@martyanov.com',
     license='MIT',
@@ -35,6 +36,9 @@ setuptools.setup(
         'Repository': 'https://github.com/martyanov/cstar-migrate',
     },
     python_requires='>=3.7,<4',
+    setup_requires=[
+        'setuptools_scm==3.3.3',
+    ],
     install_requires=[
         'arrow>=0.15,<2',
         'cassandra-driver>=3.0,<4',
