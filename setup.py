@@ -43,7 +43,7 @@ setuptools.setup(
         'arrow>=0.15,<2',
         'cassandra-driver>=3.0,<4',
         'pyyaml>=5.1,<7',
-        'tabulate>=0.8,<0.9',
+        'tabulate>=0.8,<0.10',
     ],
     extras_require={
         'dev': [
