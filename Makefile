@@ -1,9 +1,9 @@
 .DEFAULT: help
 .PHONY: help bootstrap build lint test testreport outdated upload clean
 
-VENV = .venv
-PYTHON_BIN ?= python3
-PYTHON = $(VENV)/bin/$(PYTHON_BIN)
+VENV=.venv
+PYTHON_BIN?=python3
+PYTHON=$(VENV)/bin/$(PYTHON_BIN)
 
 help:
 	@echo "Please use \`$(MAKE) <target>' where <target> is one of the following:"
@@ -19,7 +19,7 @@ help:
 bootstrap: $(VENV)/bin/activate
 $(VENV)/bin/activate:
 	$(PYTHON_BIN) -m venv $(VENV)
-	$(PYTHON) -m pip install -U pip==21.3.1 setuptools==59.6.0 wheel==0.37.0
+	$(PYTHON) -m pip install -U pip==23.2.1 setuptools==68.1.2 wheel==0.41.1
 	$(PYTHON) -m pip install -e .[dev,test]
 
 build: bootstrap
