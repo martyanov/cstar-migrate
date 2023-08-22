@@ -51,8 +51,8 @@ setuptools.setup(
             'twine==4.0.2',
         ],
         'test': [
-            'pytest-cov==3.0.0',
-            'pytest==6.2.5',
+            'pytest-cov==4.1.0',
+            'pytest==7.4.0',
         ],
     },
     entry_points={
