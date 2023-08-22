@@ -18,11 +18,11 @@ help:
 bootstrap: $(VENV)/bin/activate
 $(VENV)/bin/activate:
 	$(PYTHON_BIN) -m venv $(VENV)
-	$(PYTHON) -m pip install -U pip==23.2.1 setuptools==68.1.2 wheel==0.41.1
+	$(PYTHON) -m pip install -U build==0.10.0 pip==23.2.1 setuptools==68.1.2 wheel==0.41.2
 	$(PYTHON) -m pip install -e .[dev,test]
 
 build: bootstrap
-	$(PYTHON) setup.py sdist bdist_wheel
+	$(PYTHON) -m build -s -w
 
 lint: bootstrap
 	$(PYTHON) -m flake8 cstarmigrate tests

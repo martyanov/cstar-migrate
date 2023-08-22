@@ -1,0 +1,76 @@
+[build-system]
+requires = [
+    "setuptools-scm[toml]==7.1.0",
+    "setuptools==68.1.2",
+    "wheel==0.41.1",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["cstarmigrate"]
+
+[project]
+name = "cstar-migrate"
+description = "Cassandra schema migration tool"
+readme = "README.rst"
+requires-python = ">=3.8,<4"
+license = {file = "LICENSE"}
+keywords = ["cassandra", "schema", "migration", "tool"]
+authors = [
+    {name = "Andrey Martyanov", email = "andrey@martyanov.com"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Database",
+]
+dependencies = [
+    "arrow>=0.15,<2",
+    "cassandra-driver>=3.0,<4",
+    "pyyaml>=5.1,<7",
+    "tabulate>=0.8,<0.10",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+    "flake8==6.1.0",
+    "flake8-pyproject==1.2.3",
+]
+test = [
+    "pytest-cov==4.1.0",
+    "pytest==7.4.0",
+]
+
+[project.scripts]
+cstar-migrate = "cstarmigrate.__main__:main"
+
+[project.urls]
+Repository = "https://github.com/martyanov/cstar-migrate"
+Issues = "https://github.com/martyanov/cstar-migrate/issues"
+
+[tool.setuptools_scm]
+
+[tool.flake8]
+max-line-length = 90
+
+[tool.pytest.ini_options]
+addopts = "--cov=cstarmigrate --no-cov-on-fail"
+testpaths = [
+    "cstarmigrate",
+    "tests",
+]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == '__main__':",
+]
