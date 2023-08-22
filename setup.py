@@ -47,7 +47,7 @@ setuptools.setup(
     ],
     extras_require={
         'dev': [
-            'flake8==4.0.1',
+            'flake8==6.1.0',
             'twine==3.7.1',
         ],
         'test': [
