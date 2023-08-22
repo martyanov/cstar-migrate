@@ -130,6 +130,13 @@ def main(argv=None):
 
     config = cstar_config.MigrationConfig.load(opts.config_file)
 
+    # Print help by default if no action was provided
+    if getattr(opts, 'action', None) is None:
+        parser.print_help()
+
+        sys.exit(0)
+
+    # Provide ability to open generated migration when executed from a TTY
     if opts.action == 'generate':
         new_path = cstar_migration.Migration.generate(
             config=config,
@@ -140,26 +147,29 @@ def main(argv=None):
             open_file(new_path)
 
         print(os.path.basename(new_path))
-    else:
-        with cstar_migrator.Migrator(
-            config=config,
-            profile=opts.profile,
-            hosts=opts.hosts.split(','),
-            port=opts.port,
-            user=opts.user,
-            password=opts.password,
-            protocol_version=opts.protocol_version,
-            host_cert_path=opts.ssl_cert,
-            client_key_path=opts.ssl_client_private_key,
-            client_cert_path=opts.ssl_client_cert,
-        ) as migrator:
-            cmd_method = getattr(migrator, opts.action)
-            if not callable(cmd_method):
-                print('Error: invalid command', file=sys.stderr)
-                sys.exit(1)
 
-            try:
-                cmd_method(opts)
-            except exceptions.MigrationError as e:
-                print(f'Error: {e!r}', file=sys.stderr)
-                sys.exit(1)
+        sys.exit(0)
+
+    # Handle the rest
+    with cstar_migrator.Migrator(
+        config=config,
+        profile=opts.profile,
+        hosts=opts.hosts.split(','),
+        port=opts.port,
+        user=opts.user,
+        password=opts.password,
+        protocol_version=opts.protocol_version,
+        host_cert_path=opts.ssl_cert,
+        client_key_path=opts.ssl_client_private_key,
+        client_cert_path=opts.ssl_client_cert,
+    ) as migrator:
+        cmd_method = getattr(migrator, opts.action)
+        if not callable(cmd_method):
+            print('Error: invalid command', file=sys.stderr)
+            sys.exit(1)
+
+        try:
+            cmd_method(opts)
+        except exceptions.MigrationError as e:
+            print(f'Error: {e!r}', file=sys.stderr)
+            sys.exit(1)
