@@ -25,7 +25,6 @@ setuptools.setup(
         'Intended Audience :: System Administrators',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
@@ -35,7 +34,7 @@ setuptools.setup(
         'Bug Reports': 'https://github.com/martyanov/cstar-migrate/issues',
         'Repository': 'https://github.com/martyanov/cstar-migrate',
     },
-    python_requires='>=3.7,<4',
+    python_requires='>=3.8,<4',
     setup_requires=[
         'setuptools_scm==3.3.3',
     ],
