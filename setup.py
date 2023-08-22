@@ -48,7 +48,7 @@ setuptools.setup(
     extras_require={
         'dev': [
             'flake8==6.1.0',
-            'twine==3.7.1',
+            'twine==4.0.2',
         ],
         'test': [
             'pytest-cov==3.0.0',
